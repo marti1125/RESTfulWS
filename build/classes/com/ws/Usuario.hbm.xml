@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
-<hibernate-mapping>
+<hibernate-mapping package="com.ws">
 
-    <class name="com.ws.Usuario" table="Usuario">
+    <class name="Usuario" table="Usuario">
  
         <id name="id" column="id">
-            <generator class="native" />
+            <generator class="increment" />
         </id>
  
         <property name="codigo">
@@ -17,7 +17,7 @@
         </property>
  
         <property name="nombreCompleto">
-            <column name="nombreCompleto" length="16" not-null="true" />
+            <column name="nombreCompleto" length="16" not-null="false" />
         </property>
  
     </class>

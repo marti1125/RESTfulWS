@@ -1,19 +1,14 @@
 package com.ws;
 
-import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -39,18 +34,26 @@ public class UserInfo {
 	public String userName(@PathParam("i") String i) {
 		
 		String nombre = "";
-		
-		try {
-			System.out.println("here");
-			Session session=factory.getCurrentSession();
-			List<Usuario> list = session.createQuery("from Usuario").list();
-			System.out.println(list);
-			System.out.println("nombreCompleto    " + list.get(0).nombreCompleto.toString());
-			nombre = list.get(0).nombreCompleto.toString();
 			
-		} catch(Exception e) {
-			System.out.println("Error   " + e);
-		}
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+		//Session session = factory.openSession();
+        
+    	Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("from Usuario");
+        List<Usuario> usuarios = query.list();
+        
+        for(Usuario usuario : usuarios){
+        	nombre = usuario.codigo;
+        }
+        
+        //rolling back to save the test data
+        tx.commit();
+         
+        //closing hibernate resources
+        session.close();
+    	
+        System.out.println("testtt " + usuarios);
 		
 		String name = i;
 		return "<User>" + "<Name>" + nombre + "</Name>" + "</User>";
@@ -62,6 +65,39 @@ public class UserInfo {
 	public String userAge(@PathParam("j") int j) {
 		int age = j;
 		return "<User>" + "<Age>" + age + "</Age>" + "</User>";
+	}
+	
+	@GET 
+	@Path("/listaUsuarios") 
+	//@Produces(MediaType.TEXT_XML)
+	@Produces(MediaType.APPLICATION_XML)
+	public String listaUsuarios(){
+		
+		StringBuffer xml = new StringBuffer("<usuarios>");
+		
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        
+    	Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("from Usuario");
+        List<Usuario> usuarios = query.list();
+        
+        for(Usuario usuario : usuarios){
+        	xml.append("<usuario>");
+        	xml.append("<codigo>"+usuario.codigo+"</codigo>");
+        	xml.append("<password>"+usuario.password+"</password>");
+        	xml.append("<nombreCompleto>"+usuario.nombreCompleto+"</nombreCompleto>");
+        	xml.append("</usuario>");
+        }
+        
+        xml.append("</usuarios>");
+        
+        tx.commit();
+        
+        session.close();
+        
+        return xml.toString();
+        
 	}
 	
 }
