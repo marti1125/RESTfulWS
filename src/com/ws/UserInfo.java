@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Query;
@@ -69,7 +70,6 @@ public class UserInfo {
 	
 	@GET 
 	@Path("/listaUsuarios") 
-	//@Produces(MediaType.TEXT_XML)
 	@Produces(MediaType.APPLICATION_XML)
 	public String listaUsuarios(){
 		
@@ -89,6 +89,36 @@ public class UserInfo {
         	xml.append("<nombreCompleto>"+usuario.nombreCompleto+"</nombreCompleto>");
         	xml.append("</usuario>");
         }
+        
+        xml.append("</usuarios>");
+        
+        tx.commit();
+        
+        session.close();
+        
+        return xml.toString();
+        
+	}
+	
+	@GET 
+	@Path("/login") 
+	@Produces(MediaType.APPLICATION_XML)
+	public String login(@QueryParam("codigo") String codigo, @QueryParam("password") String password) {
+		
+		StringBuffer xml = new StringBuffer("<usuarios>");
+		
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        
+    	Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("from Usuario where codigo = '" + codigo + "' and password = '" + password + "'");
+        Usuario usuario = (Usuario) query.list().get(0);
+        
+    	xml.append("<usuario>");
+    	xml.append("<codigo>"+usuario.codigo+"</codigo>");
+    	xml.append("<password>"+usuario.password+"</password>");
+    	xml.append("<nombreCompleto>"+usuario.nombreCompleto+"</nombreCompleto>");
+    	xml.append("</usuario>");
         
         xml.append("</usuarios>");
         
