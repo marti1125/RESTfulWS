@@ -102,7 +102,7 @@ public class UserInfo {
 	
 	@GET 
 	@Path("/login") 
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_XML + ";charset=utf-8")
 	public String login(@QueryParam("codigo") String codigo, @QueryParam("password") String password) {
 		
 		StringBuffer xml = new StringBuffer("<usuarios>");
@@ -112,15 +112,28 @@ public class UserInfo {
         
     	Transaction tx = session.beginTransaction();
         Query query = session.createQuery("from Usuario where codigo = '" + codigo + "' and password = '" + password + "'");
-        Usuario usuario = (Usuario) query.list().get(0);
         
-    	xml.append("<usuario>");
-    	xml.append("<codigo>"+usuario.codigo+"</codigo>");
-    	xml.append("<password>"+usuario.password+"</password>");
-    	xml.append("<nombreCompleto>"+usuario.nombreCompleto+"</nombreCompleto>");
-    	xml.append("</usuario>");
+        List<Usuario> usuario = query.list();
         
-        xml.append("</usuarios>");
+        if(!usuario.isEmpty()){
+        	
+        	xml.append("<usuario>");
+        	xml.append("<codigo>"+usuario.get(0).codigo+"</codigo>");
+        	xml.append("<password>"+usuario.get(0).password+"</password>");
+        	xml.append("<nombreCompleto>"+usuario.get(0).nombreCompleto+"</nombreCompleto>");
+        	xml.append("</usuario>");
+        	xml.append("</usuarios>");
+        	
+        } else {
+        	
+        	xml.append("<usuario>");
+        	xml.append("<codigo>noexiste</codigo>");
+        	xml.append("<password>noexiste</password>");
+        	xml.append("<nombreCompleto>noexiste</nombreCompleto>");
+        	xml.append("</usuario>");
+            xml.append("</usuarios>");
+            
+        }
         
         tx.commit();
         
