@@ -3,8 +3,8 @@ RESTfulWS
 
 Java Restful WS
 
-* Jersey
-* Hibernate
+* Jersey v1.18
+* Hibernate v4.3.6
 * Tomcat v7.0
 
 Lista de servicios:
