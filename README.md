@@ -5,8 +5,9 @@ Java Restful WS
 
 * Jersey
 * Hibernate
-* Tomcat
+* Tomcat v7.0
 
-Por el momento solo expone un servicio:
+Lista de servicios:
 
-http://localhost:8080/RESTfulWS/rest/UserInfoService/login
+* http://localhost:8080/RESTfulWS/rest/UserInfoService/listaUsuarios
+* http://localhost:8080/RESTfulWS/rest/UserInfoService/login
